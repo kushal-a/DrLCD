@@ -143,6 +143,7 @@ extern "C" {
 // DRLCD Definitions
 #define PIN_SENSOR_SDA          PB9
 #define PIN_SENSOR_SCL          PB8
+#define ADC1_output             PA1
 
 // Extra HAL modules
 #if defined(STM32F103xE) || defined(STM32F103xG)

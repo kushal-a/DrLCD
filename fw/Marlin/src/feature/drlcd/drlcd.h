@@ -2,17 +2,23 @@
 
 #include <variant.h>
 #include <Wire.h>
+/*
+#include "module/Adafruit_AS7341/Adafruit_AS7341.h"
+#include "module/Adafruit_Sensor/Adafruit_Sensor.h"
+#include "module/Adafruit_TSL2561/Adafruit_TSL2561_U.h"
+*/
 #include <Adafruit_Sensor.h>
 #include <Adafruit_TSL2561_U.h>
 #include <Adafruit_AS7341.h>
-
-
+#include <ML8511.h>
 
 class DrLcd {
 private:
     TwoWire _wire = TwoWire(PIN_SENSOR_SDA, PIN_SENSOR_SCL);
     Adafruit_TSL2561_Unified _tsl2561 = Adafruit_TSL2561_Unified(TSL2561_ADDR_HIGH);
     Adafruit_AS7341 _as7341 = Adafruit_AS7341();
+    ML8511 _ml8511 = ML8511(ADC1_output);
+    
 public:
     void init() {
         _wire.begin();
@@ -26,6 +32,8 @@ public:
         _as7341.setATIME(100);
         _as7341.setASTEP(100);
         _as7341.setGain(AS7341_GAIN_16X);
+
+        _ml8511.setVoltsPerStep(3.3, 4095);
     }
 
     int readTSL2561() {
@@ -45,6 +53,13 @@ public:
         }
         return values;
     }
+
+    float readML8511() {
+
+        return _ml8511.getUV();
+    }
+
+
 };
 
 extern DrLcd DR_LCD;

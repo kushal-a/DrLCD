@@ -16,3 +16,8 @@ void GcodeSuite::M5501() {
     SERIAL_ECHO("\n");
 }
 
+void GcodeSuite::M5502() {
+    float value = DR_LCD.readML8511();
+    SERIAL_ECHOPAIR_F("Data: ", value);
+    SERIAL_ECHO("\n");
+}

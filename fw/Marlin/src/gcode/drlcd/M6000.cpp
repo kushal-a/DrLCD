@@ -10,11 +10,19 @@ void measureAndReportTSL2561() {
     SERIAL_ECHO("\n");
 }
 
+void measureAndReportML8511() {
+    auto value = DR_LCD.readML8511();
+    SERIAL_ECHO(value);
+    SERIAL_ECHO("\n");
+}
+
 void measureAndReport(int sensorType) {
     switch (sensorType) {
         case 0:
             measureAndReportTSL2561();
             break;
+        case 2:
+            measureAndReportML8511();
         default:
             SERIAL_ECHO("Unknown sensor specified\n");
     }

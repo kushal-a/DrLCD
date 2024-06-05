@@ -1246,6 +1246,7 @@ private:
   #if ENABLED(DRLCD)
     static void M5500();
     static void M5501();
+    static void M5502();
     static void M6000();
   #endif
 

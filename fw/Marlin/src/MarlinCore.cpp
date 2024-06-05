@@ -47,6 +47,14 @@
 #include "module/stepper.h"
 #include "module/temperature.h"
 
+/*
+#include "module/Adafruit_AS7341/Adafruit_AS7341.h"
+#include "module/Adafruit_Sensor/Adafruit_Sensor.h"
+#include "module/Adafruit_TSL2561/Adafruit_TSL2561_U.h"
+#include "module/Adafruit_BusIO/Adafruit_BusIO_Register.h"
+#include "module/Adafruit_BusIO/Adafruit_I2CDevice.h"
+*/
+
 #include "gcode/gcode.h"
 #include "gcode/parser.h"
 #include "gcode/queue.h"
