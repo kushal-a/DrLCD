@@ -40,6 +40,18 @@ class AS7625(Sensor):
     def interpret(self, values: List[str]) -> Any:
         raise NotImplementedError("TBA")
 
+class ML8511(Sensor):
+    @Sensor.directCommand.getter
+    def directCommand(self) -> str:
+        return "M5502"
+
+    @Sensor.index.getter
+    def index(self) -> int:
+        return 2
+
+    def interpret(self, values: List[str]) -> Any:
+        raise NotImplementedError("TBA")
+
 
 def getSensor(sensor: str) -> Sensor:
     """
@@ -48,7 +60,8 @@ def getSensor(sensor: str) -> Sensor:
     try:
         return {
             "TSL2561": TSL2561(),
-            "AS7625": AS7625()
+            "AS7625": AS7625(),
+            "ML8511": ML8511()
         }[sensor]
     except KeyError:
         raise RuntimeError(f"Unknown sensor {sensor}") from None
@@ -61,7 +74,7 @@ def getSensor(sensor: str) -> Sensor:
     help="Screen size in millimeters")
 @click.option("--resolution", type=Resolution(),
     help="Number of samples in vertical and horizontal direction")
-@click.option("--sensor", type=click.Choice(["TSL2561", "AS7625"]), default="TSL2561",
+@click.option("--sensor", type=click.Choice(["TSL2561", "AS7625", "ML8511"]), default="ML8511",
     help="Sensor used for measurement")
 @click.option("--feedrate", type=int, default=3000,
     help="Feedrate for the measurement")
