@@ -21,8 +21,9 @@ void measureAndReport(int sensorType) {
         case 0:
             measureAndReportTSL2561();
             break;
-        case 2:
+        case 1:
             measureAndReportML8511();
+            break;
         default:
             SERIAL_ECHO("Unknown sensor specified\n");
     }

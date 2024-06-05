@@ -35,7 +35,7 @@ class AS7625(Sensor):
 
     @Sensor.index.getter
     def index(self) -> int:
-        return 1
+        return 2
 
     def interpret(self, values: List[str]) -> Any:
         raise NotImplementedError("TBA")
@@ -47,7 +47,7 @@ class ML8511(Sensor):
 
     @Sensor.index.getter
     def index(self) -> int:
-        return 2
+        return 1
 
     def interpret(self, values: List[str]) -> Any:
         raise NotImplementedError("TBA")
