@@ -387,6 +387,11 @@ void GCodeParser::unknown_command_warning() {
   SERIAL_ECHO_MSG(STR_UNKNOWN_COMMAND, command_ptr, "\"");
 }
 
+void GCodeParser::test_command()
+{
+  SERIAL_ECHO_MSG("kushal testing here", command_ptr, "\"");
+}
+
 #if ENABLED(DEBUG_GCODE_PARSER)
 
   void GCodeParser::debug() {

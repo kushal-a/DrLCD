@@ -132,6 +132,7 @@ def fastMeasurement(machine: Machine, size: Tuple[int, int],
                 feedMultiplier *= 0.95
                 print(f"Measurement unsuccessful, lowering feedrate to {feedrate * feedMultiplier}")
                 continue
+            print(values)
             if len(values) != resolution[0]:
                 print("Warning, some samples were missing; retrying")
                 continue

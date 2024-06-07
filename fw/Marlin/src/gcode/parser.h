@@ -412,6 +412,7 @@ public:
   static feedRate_t value_feedrate() { return MMM_TO_MMS(value_linear_units()); }
 
   void unknown_command_warning();
+  void test_command();
 
   // Provide simple value accessors with default option
   static char*     stringval(const char c, char * const dval=nullptr) { return seenval(c) ? value_string()   : dval; }

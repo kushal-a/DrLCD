@@ -694,6 +694,12 @@ endif
 ifeq ($(TMC), 1)
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/TMCStepper/src
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/TMCStepper/src/source
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Adafruit_Sensor
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Adafruit_BusIO
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Adafruit_AS7341
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Adafruit_TSL2561
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/ML8511
+
 endif
 
 ifeq ($(HARDWARE_VARIANT), arduino)

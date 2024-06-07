@@ -1094,7 +1094,10 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 6000: M6000(); break;
       #endif
 
-      default: parser.unknown_command_warning(); break;
+      default: 
+        parser.test_command();
+        parser.unknown_command_warning(); 
+        break;
     }
     break;
 
