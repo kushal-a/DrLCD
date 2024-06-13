@@ -27,33 +27,44 @@
 
 #include "MarlinConfigPre.h"
 
-#ifndef __MARLIN_DEPS__
+#ifdef __MARLIN_DEPS__
+  #include "../HAL/shared/fauxpins.h"
+#else
   #include "../HAL/HAL.h"
 #endif
 
 #include "../pins/pins.h"
 
 #ifndef __MARLIN_DEPS__
-  #include HAL_PATH(../HAL, timers.h)
-  #include HAL_PATH(../HAL, spi_pins.h)
+  #include HAL_PATH(.., timers.h)
+  #include HAL_PATH(.., spi_pins.h)
 #endif
 
 #include "Conditionals_post.h"
 
 #ifndef __MARLIN_DEPS__
 
-  #include HAL_PATH(../HAL, inc/Conditionals_post.h)
+  #include HAL_PATH(.., inc/Conditionals_post.h)
 
   #include "../core/types.h"  // Ahead of sanity-checks
 
-  #include "SanityCheck.h"
-  #include HAL_PATH(../HAL, inc/SanityCheck.h)
+  #include "Conditionals_type.h"
+  #include HAL_PATH(.., inc/Conditionals_type.h)
+
+  #include "Changes.h"
 
   // Include all core headers
   #include "../core/language.h"
   #include "../core/utility.h"
+  #include "../core/mstring.h"
   #include "../core/serial.h"
+  #include "../core/endianness.h"
 
 #endif
 
 #include "../core/multi_language.h"
+
+#ifndef __MARLIN_DEPS__
+  #include "SanityCheck.h"
+  #include HAL_PATH(.., inc/SanityCheck.h)
+#endif

@@ -34,6 +34,10 @@
 #include <freertos/queue.h>
 #include "../../module/stepper.h"
 
+#if ENABLED(FT_MOTION)
+  #include "../../module/ft_motion.h"
+#endif
+
 #define DMA_BUF_COUNT 8                                // number of DMA buffers to store data
 #define DMA_BUF_LEN   4092                             // maximum size in bytes
 #define I2S_SAMPLE_SIZE 4                              // 4 bytes, 32 bits per sample
@@ -134,26 +138,56 @@ static void IRAM_ATTR i2s_intr_handler_default(void *arg) {
 
   if (high_priority_task_awoken == pdTRUE) portYIELD_FROM_ISR();
 
-  // clear interrupt
-  I2S0.int_clr.val = I2S0.int_st.val; //clear pending interrupt
+  // Clear pending interrupt
+  I2S0.int_clr.val = I2S0.int_st.val;
 }
 
 void stepperTask(void *parameter) {
-  uint32_t remaining = 0;
+  uint32_t nextMainISR = 0;
+  #if ENABLED(LIN_ADVANCE)
+    uint32_t nextAdvanceISR = Stepper::LA_ADV_NEVER;
+  #endif
 
-  while (1) {
+  for (;;) {
     xQueueReceive(dma.queue, &dma.current, portMAX_DELAY);
     dma.rw_pos = 0;
 
+    const bool using_ftMotion = TERN0(FT_MOTION, ftMotion.cfg.mode);
+
     while (dma.rw_pos < DMA_SAMPLE_COUNT) {
-      // Fill with the port data post pulse_phase until the next step
-      if (remaining) {
-        i2s_push_sample();
-        remaining--;
-      }
-      else {
-        Stepper::pulse_phase_isr();
-        remaining = Stepper::block_phase_isr();
+
+      #if ENABLED(FT_MOTION)
+
+        if (using_ftMotion) {
+          if (!nextMainISR) stepper.ftMotion_stepper();
+          nextMainISR = 0;
+        }
+
+      #endif
+
+      if (!using_ftMotion) {
+        if (!nextMainISR) {
+          Stepper::pulse_phase_isr();
+          nextMainISR = Stepper::block_phase_isr();
+        }
+        #if ENABLED(LIN_ADVANCE)
+          else if (!nextAdvanceISR) {
+            Stepper::advance_isr();
+            nextAdvanceISR = Stepper::la_interval;
+          }
+        #endif
+        else
+          i2s_push_sample();
+
+        nextMainISR--;
+
+        #if ENABLED(LIN_ADVANCE)
+          if (nextAdvanceISR == Stepper::LA_ADV_NEVER)
+            nextAdvanceISR = Stepper::la_interval;
+
+          if (nextAdvanceISR && nextAdvanceISR != Stepper::LA_ADV_NEVER)
+            nextAdvanceISR--;
+        #endif
       }
     }
   }
@@ -340,7 +374,7 @@ void i2s_push_sample() {
   // Every 4µs (when space in DMA buffer) toggle each expander PWM output using
   // the current duty cycle/frequency so they sync with any steps (once
   // through the DMA/FIFO buffers).  PWM signal inversion handled by other functions
-  LOOP_L_N(p, MAX_EXPANDER_BITS) {
+  for (uint8_t p = 0; p < MAX_EXPANDER_BITS; ++p) {
     if (hal.pwm_pin_data[p].pwm_duty_ticks > 0) { // pin has active pwm?
       if (hal.pwm_pin_data[p].pwm_tick_count == 0) {
         if (TEST32(i2s_port_data, p)) {  // hi->lo

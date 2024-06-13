@@ -23,6 +23,8 @@
 
 /**
  * Gen7 v1.4 pin assignments
+ * Schematic (1.4): https://github.com/Traumflug/Generation_7_Electronics/blob/Gen7Board-1.4/release%20documents/Gen7Board%201.4%20Schematic.pdf
+ * Schematic (1.4.1): https://github.com/Traumflug/Generation_7_Electronics/blob/Gen7Board-1.4.1/release%20documents/Gen7Board%201.4.1%20Schematic.pdf
  */
 
 /**
@@ -34,7 +36,7 @@
  */
 
 /**
- * A useable Arduino IDE extension (board manager) can be found at
+ * A useable Arduino IDE extension (Boards Manager) can be found at
  * https://github.com/Lauszus/Sanguino
  *
  * This extension has been tested on Arduino 1.6.12 & 1.8.0
@@ -114,6 +116,8 @@
 //
 // M3/M4/M5 - Spindle/Laser Control
 //
-#define SPINDLE_LASER_ENA_PIN                 20  // Pullup or pulldown!
-#define SPINDLE_LASER_PWM_PIN                 16  // Hardware PWM
-#define SPINDLE_DIR_PIN                       21
+#if HAS_CUTTER
+  #define SPINDLE_LASER_PWM_PIN               16  // Hardware PWM
+  #define SPINDLE_LASER_ENA_PIN               20  // Pullup or pulldown!
+  #define SPINDLE_DIR_PIN                     21
+#endif

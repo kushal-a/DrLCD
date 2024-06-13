@@ -23,6 +23,8 @@
 
 //
 // FYSETC F6 v1.4 pin assignments
+// Schematic (1.4): https://github.com/FYSETC/FYSETC-F6/blob/master/Hardware/V1.4/F6%20V1.4%20Sch.pdf
+// ATmega2560
 //
 
 #define BOARD_INFO_NAME "FYSETC F6 1.4"

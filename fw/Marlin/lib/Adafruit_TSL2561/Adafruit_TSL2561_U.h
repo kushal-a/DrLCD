@@ -167,9 +167,9 @@ typedef enum {
 class Adafruit_TSL2561_Unified : public Adafruit_Sensor {
 public:
   Adafruit_TSL2561_Unified(uint8_t addr, int32_t sensorID = -1);
-  boolean begin(void);
-  boolean begin(TwoWire *theWire);
-  boolean init();
+  bool begin(void);
+  bool begin(TwoWire *theWire);
+  bool init();
 
   /* TSL2561 Functions */
   void enableAutoRange(bool enable);
@@ -186,8 +186,8 @@ private:
   TwoWire *_i2c;
 
   int8_t _addr;
-  boolean _tsl2561Initialised;
-  boolean _tsl2561AutoGain;
+  bool _tsl2561Initialised;
+  bool _tsl2561AutoGain;
   tsl2561IntegrationTime_t _tsl2561IntegrationTime;
   tsl2561Gain_t _tsl2561Gain;
   int32_t _tsl2561SensorID;

@@ -74,7 +74,7 @@ Adafruit_TSL2561_Unified::Adafruit_TSL2561_Unified(uint8_t addr,
     @returns True if sensor is found and initialized, false otherwise.
 */
 /**************************************************************************/
-boolean Adafruit_TSL2561_Unified::begin() {
+bool Adafruit_TSL2561_Unified::begin() {
   _i2c = &Wire;
   _i2c->begin();
   return init();
@@ -88,7 +88,7 @@ boolean Adafruit_TSL2561_Unified::begin() {
     @returns True if sensor is found and initialized, false otherwise.
 */
 /**************************************************************************/
-boolean Adafruit_TSL2561_Unified::begin(TwoWire *theWire) {
+bool Adafruit_TSL2561_Unified::begin(TwoWire *theWire) {
   _i2c = theWire;
   _i2c->begin();
   return init();
@@ -102,7 +102,7 @@ boolean Adafruit_TSL2561_Unified::begin(TwoWire *theWire) {
     @returns True if sensor is found and initialized, false otherwise.
 */
 /**************************************************************************/
-boolean Adafruit_TSL2561_Unified::init() {
+bool Adafruit_TSL2561_Unified::init() {
   /* Make sure we're actually connected */
   uint8_t x = read8(TSL2561_REGISTER_ID);
   if (x & 0x05) { // ID code for TSL2561

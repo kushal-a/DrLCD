@@ -23,6 +23,10 @@
 
 /**
  * Gen7 v1.1, v1.2, v1.3 pin assignments
+ * Schematic (1.1): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.1/release%20documents/Gen7Board%20Schematic.pdf
+ * Schematic (1.2): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.2/release%20documents/Gen7Board%20Schematic.pdf
+ * Schematic (1.3): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.3/release%20documents/Gen7Board%20Schematic.pdf
+ * Schematic (1.3.1): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.3.1/release%20documents/Gen7Board%20Schematic.pdf
  */
 
  /**
@@ -34,7 +38,7 @@
  */
 
 /**
- * A useable Arduino IDE extension (board manager) can be found at
+ * A useable Arduino IDE extension (Boards Manager) can be found at
  * https://github.com/Lauszus/Sanguino
  *
  * This extension has been tested on Arduino 1.6.12 & 1.8.0
@@ -54,7 +58,7 @@
 #include "env_validate.h"
 
 #ifndef BOARD_INFO_NAME
-  #define BOARD_INFO_NAME "Gen7 v1.1 / 1.2"
+  #define BOARD_INFO_NAME "Gen7 v1.1 - v1.3"
 #endif
 
 #ifndef GEN7_VERSION
@@ -109,8 +113,8 @@
 #define HEATER_0_PIN                           4
 #define HEATER_BED_PIN                         3
 
-#if !defined(FAN_PIN) && GEN7_VERSION < 13        // Gen7 v1.3 removed the fan pin
-  #define FAN_PIN                             31
+#if !defined(FAN0_PIN) && GEN7_VERSION < 13       // Gen7 v1.3 removed the fan pin
+  #define FAN0_PIN                            31
 #endif
 
 //

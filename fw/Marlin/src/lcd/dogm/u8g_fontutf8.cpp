@@ -12,7 +12,7 @@
 #if HAS_MARLINUI_U8GLIB
 
 #include <string.h>
-#include "../fontutils.h"
+#include "../utf8.h"
 #include "u8g_fontutf8.h"
 
 typedef void font_t;
@@ -121,8 +121,8 @@ static font_group_t g_fontgroup_root = { nullptr, 0 };
  */
 static inline bool uxg_Utf8FontIsInited() { return flag_fontgroup_was_inited; }
 
-int uxg_SetUtf8Fonts (const uxg_fontinfo_t * fntinfo, int number) {
-  flag_fontgroup_was_inited = 1;
+int uxg_SetUtf8Fonts(const uxg_fontinfo_t *fntinfo, int number) {
+  flag_fontgroup_was_inited = true;
   return fontgroup_init(&g_fontgroup_root, fntinfo, number);
 }
 
@@ -161,7 +161,7 @@ static int fontgroup_cb_draw_u8g(void *userdata, const font_t *fnt_current, cons
  *
  * Draw a UTF-8 string at the specified position
  */
-unsigned int uxg_DrawWchar(u8g_t *pu8g, unsigned int x, unsigned int y, const lchar_t &wc, pixel_len_t max_width) {
+unsigned int uxg_DrawLchar(u8g_t *pu8g, unsigned int x, unsigned int y, const lchar_t &wc, pixel_len_t max_width) {
   struct _uxg_drawu8_data_t data;
   font_group_t *group = &g_fontgroup_root;
   const font_t *fnt_default = uxg_GetFont(pu8g);

@@ -1,8 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- *
  * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
- * SAMD51 HAL developed by Giuliano Zaro (AKA GMagician)
+ *
+ * Based on Sprinter and grbl.
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+
+/**
+ * SAMD51 HAL developed by Giuliano Zaro (AKA GMagician)
+ */
 #ifdef __SAMD51__
 
 #include "../../inc/MarlinConfig.h"
@@ -30,7 +35,7 @@
 
 static bool initialized;
 
-size_t PersistentStore::capacity() { return qspi.size(); }
+size_t PersistentStore::capacity() { return qspi.size() - eeprom_exclude_size; }
 
 bool PersistentStore::access_start() {
   if (!initialized) {
@@ -48,7 +53,7 @@ bool PersistentStore::access_finish() {
 bool PersistentStore::write_data(int &pos, const uint8_t *value, size_t size, uint16_t *crc) {
   while (size--) {
     const uint8_t v = *value;
-    qspi.writeByte(pos, v);
+    qspi.writeByte(REAL_EEPROM_ADDR(pos), v);
     crc16(crc, &v, 1);
     pos++;
     value++;
@@ -58,7 +63,7 @@ bool PersistentStore::write_data(int &pos, const uint8_t *value, size_t size, ui
 
 bool PersistentStore::read_data(int &pos, uint8_t *value, size_t size, uint16_t *crc, const bool writing/*=true*/) {
   while (size--) {
-    uint8_t c = qspi.readByte(pos);
+    const uint8_t c = qspi.readByte(REAL_EEPROM_ADDR(pos));
     if (writing) *value = c;
     crc16(crc, &c, 1);
     pos++;

@@ -62,6 +62,8 @@
   }
 
   void GcodeSuite::M665_report(const bool forReplay/*=true*/) {
+    TERN_(MARLIN_SMALL_BUILD, return);
+
     report_heading_etc(forReplay, F(STR_DELTA_SETTINGS));
     SERIAL_ECHOLNPGM_P(
         PSTR("  M665 L"), LINEAR_UNIT(delta_diagonal_rod)
@@ -132,6 +134,8 @@
   }
 
   void GcodeSuite::M665_report(const bool forReplay/*=true*/) {
+    TERN_(MARLIN_SMALL_BUILD, return);
+
     report_heading_etc(forReplay, F(STR_SCARA_SETTINGS " (" STR_S_SEG_PER_SEC TERN_(HAS_SCARA_OFFSET, " " STR_SCARA_P_T_Z) ")"));
     SERIAL_ECHOLNPGM_P(
       PSTR("  M665 S"), segments_per_second
@@ -167,11 +171,11 @@
     if (parser.seenval('T')) draw_area_max.y = parser.value_linear_units();
     if (parser.seenval('B')) draw_area_min.y = parser.value_linear_units();
     if (parser.seenval('H')) polargraph_max_belt_len = parser.value_linear_units();
-    draw_area_size.x = draw_area_max.x - draw_area_min.x;
-    draw_area_size.y = draw_area_max.y - draw_area_min.y;
   }
 
   void GcodeSuite::M665_report(const bool forReplay/*=true*/) {
+    TERN_(MARLIN_SMALL_BUILD, return);
+
     report_heading_etc(forReplay, F(STR_POLARGRAPH_SETTINGS));
     SERIAL_ECHOLNPGM_P(
       PSTR("  M665 S"), LINEAR_UNIT(segments_per_second),
@@ -183,6 +187,26 @@
     );
   }
 
-#endif
+#elif ENABLED(POLAR)
+
+  #include "../../module/polar.h"
+
+  /**
+   * M665: Set POLAR settings
+   * Parameters:
+   *   S[segments]  - Segments-per-second
+   */
+  void GcodeSuite::M665() {
+    if (!parser.seen_any()) return M665_report();
+    if (parser.seenval('S')) segments_per_second = parser.value_float();
+  }
+
+  void GcodeSuite::M665_report(const bool forReplay/*=true*/) {
+    TERN_(MARLIN_SMALL_BUILD, return);
+    report_heading_etc(forReplay, F(STR_POLAR_SETTINGS));
+    SERIAL_ECHOLNPGM_P(PSTR("  M665 S"), segments_per_second);
+  }
+
+#endif // POLAR
 
 #endif // IS_KINEMATIC

@@ -2,11 +2,6 @@
 
 #include <variant.h>
 #include <Wire.h>
-/*
-#include "module/Adafruit_AS7341/Adafruit_AS7341.h"
-#include "module/Adafruit_Sensor/Adafruit_Sensor.h"
-#include "module/Adafruit_TSL2561/Adafruit_TSL2561_U.h"
-*/
 #include <Adafruit_Sensor.h>
 #include <Adafruit_TSL2561_U.h>
 #include <Adafruit_AS7341.h>
