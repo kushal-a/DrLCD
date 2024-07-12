@@ -1297,12 +1297,8 @@ private:
     static void M710_report(const bool forReplay=true);
   #endif
 
-  #if ENABLED(DRLCD)
-    static void M5500();
-    static void M5501();
-    static void M5502();
-    static void M6000();
-  #endif
+  static void M5500();
+  static void M6000();
 
   static void T(const int8_t tool_index) IF_DISABLED(HAS_TOOLCHANGE, { UNUSED(tool_index); });
 

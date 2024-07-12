@@ -1,46 +1,15 @@
+#include "../../feature/drlcd/drlcd.h"
 #include "../gcode.h"
-#include <src/feature/drlcd/drlcd.h>
+
+
 #include <src/module/planner.h>
 #include <src/module/motion.h>
 #include <src/gcode/parser.h>
-
-void measureAndReportTSL2561() {
-    auto value = DR_LCD.readTSL2561();
-    SERIAL_ECHO(value);
-    SERIAL_ECHO("\n");
-}
-
-void measureAndReportML8511() {
-    auto value = DR_LCD.readML8511();
-    SERIAL_ECHO(value);
-    SERIAL_ECHO("\n");
-}
-
-void measureAndReport(int sensorType) {
-    switch (sensorType) {
-        case 0:
-            measureAndReportTSL2561();
-            break;
-        case 1:
-            measureAndReportML8511();
-            break;
-        default:
-            SERIAL_ECHO("Unknown sensor specified\n");
-    }
-}
 
 void reportMeasurementMiss() {
     SERIAL_ECHO("Missed\n");
 }
 
-/**
- * Makes a line move and performs measurements using a specified
- * sensor along the movement without stopping. It reports
- *
- * - P specifies the sensor:
- *   - 0 = TSL2561
- * - S specifies the number of samples (including start and end point)
- */
 void GcodeSuite::M6000() {
     planner.synchronize();
 
@@ -71,7 +40,7 @@ void GcodeSuite::M6000() {
             for (int i = 0; i != measurementAdv; i++)
                 reportMeasurementMiss();
         } else if (measurementAdv == 1) {
-            measureAndReport(sensor);
+            DR_LCD.measure_lux();
         }
         lastMeasurement = measurementNo;
     }

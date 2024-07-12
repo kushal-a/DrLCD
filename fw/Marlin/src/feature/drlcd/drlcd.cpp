@@ -1,3 +1,3 @@
 #include "drlcd.h"
 
-DrLcd DR_LCD;
+DR_lcd DR_LCD;

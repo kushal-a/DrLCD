@@ -225,14 +225,6 @@ void SERIAL_ECHOLN(T arg1, Args ... args) { SERIAL_ECHO(arg1); SERIAL_ECHO(args 
 #define SERIAL_ERROR_MSG(V...) do{ SERIAL_ERROR_START(); SERIAL_ECHOLNPGM(V); }while(0)
 #define SERIAL_WARN_MSG(V...)  do{ SERIAL_WARN_START();  SERIAL_ECHOLNPGM(V); }while(0)
 
-// Kushal DRLCD
-// Print a single FSTR_P, F(), or FPSTR() string.
-void serial_print_P(PGM_P str);
-inline void serial_print(FSTR_P const fstr) { serial_print_P(FTOP(fstr)); }
-inline void SERIAL_ECHO_F(EnsureDouble x, int digit=2) { SERIAL_IMPL.print(x, digit); }
-#define SERIAL_ECHOPAIR_F_F(S,V...)   do{ serial_print(S); SERIAL_ECHO_F(V); }while(0)
-#define SERIAL_ECHOPAIR_F(S,V...)     SERIAL_ECHOPAIR_F_F(F(S),V)
-
 // Print a prefix, conditional string, and suffix
 void serial_ternary(FSTR_P const pre, const bool onoff, FSTR_P const on, FSTR_P const off, FSTR_P const post=nullptr);
 // Shorthand to put loose strings in PROGMEM
