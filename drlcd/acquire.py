@@ -26,24 +26,12 @@ class TSL2561(Sensor):
         return 0
 
     def interpret(self, data: str) -> Any:
-        return float(data.replace("Data:", "").strip())
+        return float(data.replace("mW/cm^2", "").strip())
 
 class AS7625(Sensor):
     @Sensor.directCommand.getter
     def directCommand(self) -> str:
         return "M5501"
-
-    @Sensor.index.getter
-    def index(self) -> int:
-        return 2
-
-    def interpret(self, values: List[str]) -> Any:
-        raise NotImplementedError("TBA")
-
-class ML8511(Sensor):
-    @Sensor.directCommand.getter
-    def directCommand(self) -> str:
-        return "M5502"
 
     @Sensor.index.getter
     def index(self) -> int:
@@ -60,8 +48,7 @@ def getSensor(sensor: str) -> Sensor:
     try:
         return {
             "TSL2561": TSL2561(),
-            "AS7625": AS7625(),
-            "ML8511": ML8511()
+            "AS7625": AS7625()
         }[sensor]
     except KeyError:
         raise RuntimeError(f"Unknown sensor {sensor}") from None
@@ -74,9 +61,9 @@ def getSensor(sensor: str) -> Sensor:
     help="Screen size in millimeters")
 @click.option("--resolution", type=Resolution(),
     help="Number of samples in vertical and horizontal direction")
-@click.option("--sensor", type=click.Choice(["TSL2561", "AS7625", "ML8511"]), default="ML8511",
+@click.option("--sensor", type=click.Choice(["TSL2561", "AS7625"]), default="TSL2561",
     help="Sensor used for measurement")
-@click.option("--feedrate", type=int, default=3000,
+@click.option("--feedrate", type=int, default=200,
     help="Feedrate for the measurement")
 @click.option("--fast", is_flag=True,
     help="Use fast acquisition method")
@@ -84,6 +71,16 @@ def measureLcd(port, output, size, resolution, sensor, feedrate, fast) -> None:
     """
     Take and LCD measurement and save the result into a file
     """
+
+    print("Start position:")
+    print("__________________________________")
+    print("     |                      |     ")
+    print("     |                      |     ")
+    print("     |                      |     ")
+    print("     |                      |     ")
+    print("     |                      |     ")
+    print("     | X                    |     ")
+    
     measurement = {
         "sensor": sensor,
         "size": size,
@@ -93,8 +90,11 @@ def measureLcd(port, output, size, resolution, sensor, feedrate, fast) -> None:
     sensor = getSensor(sensor)
 
     with machineConnection(port) as machine:
+        print("port done")
         machine.command("M17")
+        print("M17 done")
         machine.command("G92 X0 Y0")
+        print("G92 X0 Y0 done")
         machine.command(f"G0 X0 Y0 F{feedrate}")
 
         if fast:
@@ -116,11 +116,11 @@ def fastMeasurement(machine: Machine, size: Tuple[int, int],
     feedMultiplier = 1.0
     measurements = []
     for y in range(resolution[1]):
-        targetY = (y + 0.5) * size[1] / (resolution[1])
+        targetY = (y + 0.5) * (size[1]/1.2) / (resolution[1])
         print(f"Row {y + 1} / {resolution[1]}, {targetY}")
 
 
-        startX, targetX = 0, size[0]
+        startX, targetX = 0, size[0]/1.2
         if y % 2 == 1:
             startX, targetX = targetX, startX
 
@@ -128,21 +128,34 @@ def fastMeasurement(machine: Machine, size: Tuple[int, int],
             machine.command(f"G1 X{startX} Y{targetY} F{feedrate}")
             machine.command("M400")
             values = machine.command(f"M6000 S{resolution[0]} P{sensor.index} X{targetX} F{feedrate * feedMultiplier}")
-            if any("Missed" in x for x in values):
+            #print(values)
+            if any("Missed" in x for x in values):  
                 feedMultiplier *= 0.95
                 print(f"Measurement unsuccessful, lowering feedrate to {feedrate * feedMultiplier}")
                 continue
-            print(values)
-            if len(values) != resolution[0]:
-                print("Warning, some samples were missing; retrying")
-                continue
+            # if len(values) != resolution[0]:
+            #     print("Warning, some samples were missing; retrying")
+            #     continue
+            x = 0
+            while True:
+                if x<len(values):
+                    if "mW/cm^2" not in values[x]:
+                        values.pop(x)
+                    else:
+                        x=x+1
+                else:
+                    break
             break
-
+        print(len(values))
         row = [sensor.interpret(x) for x in values]
         if y % 2 == 1:
            row = reversed(row)
-        measurements.append(list(row))
-        print(f"  Got {measurements[-1]}")
+        row = list(row)
+        measurements.append(row)
+        #print(f"  Got {measurements[-1]}")
+        print("Got:")
+        for i in range(len(row)):
+            print(row[i])
     return measurements
 
 def conservativeMeasurement(machine: Machine, size: Tuple[int, int],
@@ -155,8 +168,8 @@ def conservativeMeasurement(machine: Machine, size: Tuple[int, int],
         if y % 2 == 1:
             xRange = reversed(xRange)
         for x in xRange:
-            targetX = x * size[0] / (resolution[0] - 1)
-            targetY = y * size[1] / (resolution[1] - 1)
+            targetX = x * (size[0]/1.2) / (resolution[0] - 1)
+            targetY = y * (size[1]/1.2) / (resolution[1] - 1)
             command = f"G1 X{targetX} Y{targetY} F{feedrate}"
             machine.command(command)
             machine.command("M400", timeout=15)
